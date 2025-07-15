@@ -75,7 +75,7 @@ Status: 400 Bad Request
     ...
   ]
 }
-``` 
+```
 
 ## Endpoint: Login User
 
@@ -148,3 +148,130 @@ Content-Type: application/json
 - The `password` in the response is hashed.
 - All required fields must be valid, or a 400 error is returned.
 - On invalid credentials, a 401 error is returned.
+
+---
+
+## Endpoint: Get User Profile
+
+`GET /users/profile`
+
+### Description
+
+Returns the authenticated user's profile information. Requires a valid JWT token in the `Authorization` header as `Bearer <token>` or in the `token` cookie.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Request
+
+No request body required. Token must be sent in the `Authorization` header or as a cookie.
+
+### Example Request
+
+```
+GET /users/profile
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "_id": "<user_id>",
+  "fullname": { "firstname": "John", "lastname": "Doe" },
+  "email": "john.doe@example.com",
+  "password": "<hashed_password>",
+  "socketId": null,
+  "__v": 0
+}
+```
+
+### Unauthorized (401)
+
+```
+{
+  "message": "No token provided"
+}
+```
+
+or
+
+```
+{
+  "message": "token is blacklisted"
+}
+```
+
+or
+
+```
+{
+  "message": "Unauthorized"
+}
+```
+
+### Not Found (404)
+
+```
+{
+  "message": "User not found"
+}
+```
+
+---
+
+## Endpoint: Logout User
+
+`GET /users/logout`
+
+### Description
+
+Logs out the authenticated user by blacklisting the current JWT token and clearing the token cookie.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Request
+
+No request body required. Token must be sent in the `Authorization` header or as a cookie.
+
+### Example Request
+
+```
+GET /users/logout
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Unauthorized (401)
+
+```
+{
+  "message": "No token provided"
+}
+```
+
+or
+
+```
+{
+  "message": "token is blacklisted"
+}
+```
+
+or
+
+```
+{
+  "message": "Unauthorized"
+}
+```
