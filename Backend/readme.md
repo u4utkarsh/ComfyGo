@@ -1,6 +1,6 @@
-# User Registration API Documentation
+# User API Documentation
 
-## Endpoint
+## Endpoint: Register User
 
 `POST /users/register`
 
@@ -75,10 +75,76 @@ Status: 400 Bad Request
     ...
   ]
 }
+``` 
+
+## Endpoint: Login User
+
+`POST /users/login`
+
+### Description
+
+Authenticates a user with email and password. Returns a JWT token and user data on success.
+
+### Request Body
+
 ```
+{
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)"
+}
+```
+
+### Example Request
+
+```
+POST /users/login
+Content-Type: application/json
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+```
+
+### Success Response (200)
+
+```
+{
+  "token": "<jwt_token>",
+  "user": {
+    "_id": "<user_id>",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john.doe@example.com",
+    "password": "<hashed_password>",
+    "socketId": null,
+    "__v": 0
+  }
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    { "msg": "Please enter a valid email address", "param": "email", "location": "body" },
+    ...
+  ]
+}
+```
+
+### Authentication Error (401)
+
+```
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
 
 ## Notes
 
-- The `password` field in the response is hashed.
-- The `token` is a JWT used for authentication in subsequent requests.
-- All required fields must be provided and valid, or a 400 error will be returned.
+- The `token` is a JWT for authenticating future requests.
+- The `password` in the response is hashed.
+- All required fields must be valid, or a 400 error is returned.
+- On invalid credentials, a 401 error is returned.
