@@ -275,3 +275,107 @@ or
   "message": "Unauthorized"
 }
 ```
+
+---
+
+# Captain API Documentation
+
+## Endpoint: Register Captain
+
+`POST /captain/register`
+
+### Description
+
+Registers a new captain (driver) in the system. Validates input, hashes the password, creates a captain, and returns an authentication token along with the captain data.
+
+### Request Body
+
+The request body must be a JSON object with the following structure:
+
+```
+{
+  "fullname": {
+    "firstname": "string (min 3 chars, required)",
+    "lastname": "string (min 3 chars, optional)"
+  },
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)",
+  "vehicle": {
+    "color": "string (min 3 chars, required)",
+    "plate": "string (min 3 chars, required)",
+    "capacity": "number (min 1, required)",
+    "vehicleType": "string (car|bike|auto, required)"
+  }
+}
+```
+
+### Example Request
+
+```
+POST /captain/register
+Content-Type: application/json
+{
+  "fullname": { "firstname": "Alice", "lastname": "Smith" },
+  "email": "alice.smith@example.com",
+  "password": "strongPassword123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Success Response (201)
+
+```
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "<captain_id>",
+    "fullname": { "firstname": "Alice", "lastname": "Smith" },
+    "email": "alice.smith@example.com",
+    "password": "<hashed_password>",
+    "socketId": null,
+    "status": "inactive",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": { "lat": null, "lng": null }
+    },
+    "__v": 0
+  }
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    { "msg": "First name must be at least 3 characters long", "param": "fullname.firstname", "location": "body" },
+    { "msg": "Color must be at least 3 characters long", "param": "vehicle.color", "location": "body" },
+    ...
+  ]
+}
+```
+
+### Duplicate Email (400)
+
+```
+{
+  "message": "Captain already exists"
+}
+```
+
+---
+
+## Notes (Captain)
+
+- The `token` is a JWT for authenticating future requests.
+- The `password` in the response is hashed.
+- All required fields must be valid, or a 400 error is returned.
+- Email and vehicle plate must be unique.
