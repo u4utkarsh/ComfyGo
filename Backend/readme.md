@@ -282,7 +282,7 @@ or
 
 ## Endpoint: Register Captain
 
-`POST /captain/register`
+`POST /captains/register`
 
 ### Description
 
@@ -312,7 +312,7 @@ The request body must be a JSON object with the following structure:
 ### Example Request
 
 ```
-POST /captain/register
+POST /captains/register
 Content-Type: application/json
 {
   "fullname": { "firstname": "Alice", "lastname": "Smith" },
@@ -379,3 +379,211 @@ Content-Type: application/json
 - The `password` in the response is hashed.
 - All required fields must be valid, or a 400 error is returned.
 - Email and vehicle plate must be unique.
+
+---
+
+## Endpoint: Login Captain
+
+`POST /captains/login`
+
+### Description
+
+Authenticates a captain with email and password. Returns a JWT token and captain data on success.
+
+### Request Body
+
+```
+{
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)"
+}
+```
+
+### Example Request
+
+```
+POST /captains/login
+Content-Type: application/json
+{
+  "email": "alice.smith@example.com",
+  "password": "strongPassword123"
+}
+```
+
+### Success Response (200)
+
+```
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "<captain_id>",
+    "fullname": { "firstname": "Alice", "lastname": "Smith" },
+    "email": "alice.smith@example.com",
+    "password": "<hashed_password>",
+    "socketId": null,
+    "status": "inactive",
+    "vehicle": {
+      "color": "Red",
+      "plate": "XYZ1234",
+      "capacity": 4,
+      "vehicleType": "car",
+      "location": { "lat": null, "lng": null }
+    },
+    "__v": 0
+  }
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    { "msg": "Please enter a valid email address", "param": "email", "location": "body" },
+    ...
+  ]
+}
+```
+
+### Authentication Error (401)
+
+```
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+## Endpoint: Get Captain Profile
+
+`GET /captains/profile`
+
+### Description
+
+Returns the authenticated captain's profile information. Requires a valid JWT token in the `Authorization` header as `Bearer <token>` or in the `token` cookie.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Request
+
+No request body required. Token must be sent in the `Authorization` header or as a cookie.
+
+### Example Request
+
+```
+GET /captains/profile
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "_id": "<captain_id>",
+  "fullname": { "firstname": "Alice", "lastname": "Smith" },
+  "email": "alice.smith@example.com",
+  "password": "<hashed_password>",
+  "socketId": null,
+  "status": "inactive",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ1234",
+    "capacity": 4,
+    "vehicleType": "car",
+    "location": { "lat": null, "lng": null }
+  },
+  "__v": 0
+}
+```
+
+### Unauthorized (401)
+
+```
+{
+  "message": "No token provided"
+}
+```
+
+or
+
+```
+{
+  "message": "token is blacklisted"
+}
+```
+
+or
+
+```
+{
+  "message": "Unauthorized"
+}
+```
+
+### Not Found (404)
+
+```
+{
+  "message": "Captain not found"
+}
+```
+
+---
+
+## Endpoint: Logout Captain
+
+`GET /captains/logout`
+
+### Description
+
+Logs out the authenticated captain by blacklisting the current JWT token and clearing the token cookie.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Request
+
+No request body required. Token must be sent in the `Authorization` header or as a cookie.
+
+### Example Request
+
+```
+GET /captains/logout
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Unauthorized (401)
+
+```
+{
+  "message": "No token provided"
+}
+```
+
+or
+
+```
+{
+  "message": "token is blacklisted"
+}
+```
+
+or
+
+```
+{
+  "message": "Unauthorized"
+}
+```
