@@ -37,10 +37,10 @@ const CaptainSignup = () => {
           ></img>
           <form
             onSubmit={(e) => {
-              submitHandler(e);
+              submitHandler(e); 
             }}
           >
-            <h3 className="text-base font-medium">What's your name</h3>
+            <h3 className="text-base font-medium">What's our Captain's name</h3>
             <div className="flex gap-2 mb-2">
               <input
                 className="bg-[#eeeeee] w-1/2  rounded-lg px-4 py-2 border-0  text-base placeholder:text-sm"
@@ -63,7 +63,7 @@ const CaptainSignup = () => {
                 }}
               />
             </div>
-            <h3 className="text-base  font-medium ">What's your email</h3>
+            <h3 className="text-base  font-medium ">What's our Captain's email</h3>
             <input
               className="bg-[#eeeeee] mb-2 rounded-lg px-4 py-2 border-0 w-full text-base placeholder:text-sm"
               required

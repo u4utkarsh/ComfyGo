@@ -60,14 +60,13 @@ const UserLogin = () => {
           >
             Login
           </button>
-
-          <p className="text-center ">
-            New here?{" "}
-            <Link to="/signup" className="text-blue-600">
-              Create new Account
-            </Link>
-          </p>
         </form>
+        <p className="text-center ">
+          New here?{" "}
+          <Link to="/signup" className="text-blue-600">
+            Create new Account
+          </Link>
+        </p>
       </div>
       <div>
         <Link
