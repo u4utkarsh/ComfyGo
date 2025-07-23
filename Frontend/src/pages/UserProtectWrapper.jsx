@@ -14,26 +14,28 @@ const UserProtectWrapper = ({ children }) => {
     if (!token) {
       navigate("/login");
     }
-  }, [token, navigate]);
 
-  axios
-    .get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        const data = response.data;
-        setUser(data.user);
+    axios
+      .get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          const data = response.data;
+          setUser(data.user);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        localStorage.removeItem("token");
+        navigate("/login");
+      })
+      .finally(() => {
         setIsLoading(false);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      localStorage.removeItem("token");
-      navigate("/login");
-    });
+      });
+  }, [token, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
