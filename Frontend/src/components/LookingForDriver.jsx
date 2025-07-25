@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const LookingForDriver = (props) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      props.setWaitingForDriver(true);
+      props.setVehicleFound(false);
+      props.setVehiclePanelOpen(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  });
+
   return (
     <div>
       <h5
