@@ -587,3 +587,333 @@ or
   "message": "Unauthorized"
 }
 ```
+
+---
+
+# Maps API Documentation
+
+## Endpoint: Get Coordinates
+
+`GET /maps/get-coordinates`
+
+### Description
+
+Retrieves latitude and longitude coordinates for a given address using Google Maps Geocoding API.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Query Parameters
+
+```
+address: string (min 3 chars, required) - The address to get coordinates for
+```
+
+### Example Request
+
+```
+GET /maps/get-coordinates?address=1600 Amphitheatre Parkway, Mountain View, CA
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "ltd": 37.4224764,
+  "long": -122.0842499
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    {
+      "msg": "Invalid value",
+      "param": "address",
+      "location": "query"
+    }
+  ]
+}
+```
+
+### Not Found (404)
+
+```
+{
+  "message": "Coordinates not found"
+}
+```
+
+---
+
+## Endpoint: Get Distance and Time
+
+`GET /maps/get-distance-time`
+
+### Description
+
+Calculates distance and travel time between two locations using Google Maps Distance Matrix API.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Query Parameters
+
+```
+origin: string (min 3 chars, required) - Starting location
+destination: string (min 3 chars, required) - Destination location
+```
+
+### Example Request
+
+```
+GET /maps/get-distance-time?origin=New York, NY&destination=Boston, MA
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+{
+  "distance": {
+    "text": "215 mi",
+    "value": 346030
+  },
+  "duration": {
+    "text": "3 hours 45 mins",
+    "value": 13500
+  }
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    {
+      "msg": "Invalid value",
+      "param": "origin",
+      "location": "query"
+    },
+    {
+      "msg": "Invalid value",
+      "param": "destination",
+      "location": "query"
+    }
+  ]
+}
+```
+
+### Not Found (404)
+
+```
+{
+  "message": "Distance and time not found"
+}
+```
+
+---
+
+## Endpoint: Get Auto-Complete Suggestions
+
+`GET /maps/get-suggestions`
+
+### Description
+
+Provides place autocomplete suggestions based on user input using Google Maps Places API.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Query Parameters
+
+```
+input: string (min 3 chars, required) - The input text to get suggestions for
+```
+
+### Example Request
+
+```
+GET /maps/get-suggestions?input=Times Square
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response (200)
+
+```
+[
+  {
+    "description": "Times Square, New York, NY, USA",
+    "matched_substrings": [
+      {
+        "length": 12,
+        "offset": 0
+      }
+    ],
+    "place_id": "ChIJmQJIxlVYwokRLgeuocVOGVU",
+    "reference": "ChIJmQJIxlVYwokRLgeuocVOGVU",
+    "structured_formatting": {
+      "main_text": "Times Square",
+      "main_text_matched_substrings": [
+        {
+          "length": 12,
+          "offset": 0
+        }
+      ],
+      "secondary_text": "New York, NY, USA"
+    },
+    "terms": [
+      {
+        "offset": 0,
+        "value": "Times Square"
+      },
+      {
+        "offset": 14,
+        "value": "New York"
+      },
+      {
+        "offset": 24,
+        "value": "NY"
+      },
+      {
+        "offset": 28,
+        "value": "USA"
+      }
+    ],
+    "types": [
+      "tourist_attraction",
+      "establishment",
+      "point_of_interest"
+    ]
+  }
+]
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    {
+      "msg": "Invalid value",
+      "param": "input",
+      "location": "query"
+    }
+  ]
+}
+```
+
+### Not Found (404)
+
+```
+{
+  "message": "Suggestions not found"
+}
+```
+
+---
+
+# Rides API Documentation
+
+## Endpoint: Create Ride
+
+`POST /rides/create`
+
+### Description
+
+Creates a new ride request. Calculates fare based on pickup and destination locations, and generates an OTP for the ride.
+
+### Authentication
+
+This endpoint is protected. You must be logged in and provide a valid token.
+
+### Request Body
+
+```
+{
+  "pickup": "string (min 3 chars, required) - Pickup location",
+  "destination": "string (min 3 chars, required) - Destination location",
+  "vehicleType": "string (car|bike|auto, required) - Type of vehicle requested"
+}
+```
+
+### Example Request
+
+```
+POST /rides/create
+Authorization: Bearer <jwt_token>
+Content-Type: application/json
+
+{
+  "pickup": "Times Square, New York, NY",
+  "destination": "Central Park, New York, NY",
+  "vehicleType": "car"
+}
+```
+
+### Success Response (201)
+
+```
+{
+  "ride": {
+    "_id": "<ride_id>",
+    "user": "<user_id>",
+    "pickup": "Times Square, New York, NY",
+    "destination": "Central Park, New York, NY",
+    "fare": 75.5,
+    "status": "pending",
+    "otp": "1234",
+    "__v": 0
+  }
+}
+```
+
+### Validation Error (400)
+
+```
+{
+  "errors": [
+    {
+      "msg": "invalid pickup location",
+      "param": "pickup",
+      "location": "body"
+    },
+    {
+      "msg": "Invalid destination location",
+      "param": "destination",
+      "location": "body"
+    },
+    {
+      "msg": "Invalid vehicle type",
+      "param": "vehicleType",
+      "location": "body"
+    }
+  ]
+}
+```
+
+### Server Error (500)
+
+```
+{
+  "error": "Error message describing what went wrong"
+}
+```
+
+---
+
+## Notes (Maps & Rides)
+
+- All Maps endpoints require Google Maps API key to be configured in environment variables
+- Distance is returned in meters, duration in seconds
+- Fare calculation is based on base fare + distance rate + time rate for each vehicle type
+- OTP is automatically generated for each ride (4 digits)
+- Ride status defaults to "pending" when created
+- All endpoints require authentication via JWT token
