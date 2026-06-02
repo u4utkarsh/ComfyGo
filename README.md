@@ -57,7 +57,3 @@ ComfyGo is a ride-booking platform designed to connect users with captains (driv
 - `JWT_SECRET`: Secret for JWT authentication
 - `GOOGLE_MAPS_API`: Google Maps API key
 - `MAIL_USER`, `MAIL_PASS`: Email credentials for notifications
-
-## License
-
-This project is for educational and demonstration purposes.
